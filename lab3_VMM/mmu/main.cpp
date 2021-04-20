@@ -26,8 +26,8 @@ const int PT_SIZE = 64;
 Process* current_proc = nullptr;
 queue<Frame*> free_pool;
 Frame** frame_table;
-int num_frames;
-string algo;
+int num_frames = 4;
+string algo = "f";
 string options;
 char* inputFile;
 char* randFile;
@@ -81,53 +81,11 @@ void parseArguments(int argc, char* argv[]) {
       case 'f':
       {  
         num_frames = stoi(optarg);
-        frame_table = new Frame*[num_frames];
-        for (int i = 0; i < num_frames; ++i) {
-          Frame* frame = new Frame;
-          frame->fid = i;
-          frame->pid = -1;
-          frame->vpage = -1;
-          // Frame frame ={.fid = i, .pid=-1, .vpage=-1};
-          free_pool.push(frame);
-          frame_table[i] = frame;
-        }
         break;
       }
       case 'a':
       { 
         algo = optarg; 
-        switch (algo[0]) {
-          case 'f':
-          { 
-            pager = new FIFO();
-            break;
-          }
-          case 'r':
-          {
-            isRandom = true;
-            break;
-          }
-          case 'c':
-          {
-            pager = new Clock();
-            break;
-          }
-          case 'e':
-          {
-            pager = new ESC();
-            break;
-          }
-          case 'a':
-          {
-            pager = new Aging();
-            break;
-          }
-          case 'w':
-          {
-            pager = new WorkingSet();
-            break;
-          }
-        }
         break;
       }
       case 'o':
@@ -166,6 +124,50 @@ void parseArguments(int argc, char* argv[]) {
     }
   }
 
+  frame_table = new Frame*[num_frames];
+  for (int i = 0; i < num_frames; ++i) {
+    Frame* frame = new Frame;
+    frame->fid = i;
+    frame->pid = -1;
+    frame->vpage = -1;
+    // Frame frame ={.fid = i, .pid=-1, .vpage=-1};
+    free_pool.push(frame);
+    frame_table[i] = frame;
+  }
+  
+  switch (algo[0]) {
+    case 'f':
+    { 
+      pager = new FIFO();
+      break;
+    }
+    case 'r':
+    {
+      isRandom = true;
+      break;
+    }
+    case 'c':
+    {
+      pager = new Clock();
+      break;
+    }
+    case 'e':
+    {
+      pager = new ESC();
+      break;
+    }
+    case 'a':
+    {
+      pager = new Aging();
+      break;
+    }
+    case 'w':
+    {
+      pager = new WorkingSet();
+      break;
+    }
+  }
+        
   inputFile = argv[optind++];
   randFile = argv[optind++];
   if (!isRandom) pager->tail = num_frames;
