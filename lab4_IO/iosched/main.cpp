@@ -25,7 +25,7 @@ IoOperation* curOperation = nullptr;
 list<IoOperation*> operations;
 list<IoOperation*>::iterator currentItr;
 int currentTrack = 0;
-int current_direction = 0;
+int currentDirection = 0;
 int totMovement = 0;
 int maxWaittime = 0;
 
@@ -141,7 +141,7 @@ void processOperations() {
       if (curOperation->end_time == currentTime) {
         curOperation = nullptr;
       } else {
-        currentTrack += current_direction;
+        currentTrack += currentDirection;
         currentTime++;
       }
     } 
@@ -159,11 +159,11 @@ void processOperations() {
       totMovement += current_move;
       curOperation->end_time = curOperation->start_time + current_move;
       if (curOperation->track == currentTrack) {
-        current_direction = 0;
+        currentDirection = 0;
       } else if (curOperation->track > currentTrack) {
-        current_direction = 1;
+        currentDirection = 1;
       } else {
-        current_direction = -1;
+        currentDirection = -1;
       }
     }
   }
