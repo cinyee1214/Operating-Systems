@@ -261,7 +261,7 @@ void processInstructions() {
   for (int i = 0; i < instructions.size(); ++i) {
     Instruction* instr = &instructions[i];
     if (optionO) {
-      printf("%d: ==> %c %d \n", i, instr->instruction, instr->vpage);
+      printf("%d: ==> %c %d\n", i, instr->instruction, instr->vpage);
     }
     switch(instr->instruction) {
       case 'c':
@@ -318,7 +318,7 @@ void processInstructions() {
           // UNMAP, OUT/FOUT
           if (newframe->pid != -1) {
             if (optionO) {
-              printf(" UNMAP %d:%d \n", newframe->pid, newframe->vpage);
+              printf(" UNMAP %d:%d\n", newframe->pid, newframe->vpage);
             }
             process_table[newframe->pid]->unmaps++;
             process_table[newframe->pid]->page_table[newframe->vpage].PRESENT = 0;
@@ -369,7 +369,7 @@ void processInstructions() {
 
           // MAP
           if (optionO) {
-            printf(" MAP %d \n", newframe->fid);
+            printf(" MAP %d\n", newframe->fid);
           }
           current_proc->maps++;
           newframe->age = 0;
@@ -399,7 +399,7 @@ void processInstructions() {
 
 void releaseFrames() {
   if (optionO) {
-    printf("EXIT current process %d \n", current_proc->pid);
+    printf("EXIT current process %d\n", current_proc->pid);
   }
   for (int i = 0; i < PT_SIZE; ++i) {
     PTE* pte = &(current_proc->page_table)[i];
@@ -410,7 +410,7 @@ void releaseFrames() {
 
     pte->PRESENT = 0;
     if (optionO) {
-      printf(" UNMAP %d:%d \n", current_proc->pid, i);
+      printf(" UNMAP %d:%d\n", current_proc->pid, i);
     }
     current_proc->unmaps++;
 
