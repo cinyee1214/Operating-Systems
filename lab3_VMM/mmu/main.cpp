@@ -309,10 +309,6 @@ void processInstructions() {
           }
           
           // 1 - checked and in vmas
-          if (!isRandom) {
-            pager->instr = i;
-          }
-
           Frame* newframe = getNextFrame();
           // figure out if/what to do with old frame if it was mapped
           // UNMAP, OUT/FOUT
@@ -321,9 +317,10 @@ void processInstructions() {
               printf(" UNMAP %d:%d\n", newframe->pid, newframe->vpage);
             }
             process_table[newframe->pid]->unmaps++;
-            process_table[newframe->pid]->page_table[newframe->vpage].PRESENT = 0;
 
             PTE* old_pte = &(process_table[newframe->pid]->page_table)[newframe->vpage];
+            old_pte->PRESENT = 0;
+
             if (old_pte->MODIFIED) {
               old_pte->MODIFIED = 0;
               if (old_pte->FILE_MAPPED) {
@@ -347,8 +344,12 @@ void processInstructions() {
           newframe->pid = current_proc->pid;
           newframe->vpage = instr->vpage;
           newframe->pte = pte;
-          if (!isRandom) pager->addFrame(newframe);
           
+          if (!isRandom) {
+            pager->instr = i;
+            pager->addFrame(newframe);
+          }
+
           // ZERO/IN/FIN
           if (pte->FILE_MAPPED) {
             if (optionO) {
@@ -388,9 +389,7 @@ void processInstructions() {
           } else {
             pte->MODIFIED = 1;
           }
-        } else {
-          // pte->MODIFIED = 0;
-        }
+        } 
         break;
       }
     }
@@ -408,7 +407,6 @@ void releaseFrames() {
 
     if (!pte->PRESENT) continue;
 
-    pte->PRESENT = 0;
     if (optionO) {
       printf(" UNMAP %d:%d\n", current_proc->pid, i);
     }
